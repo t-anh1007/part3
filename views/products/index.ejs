@@ -1,0 +1,188 @@
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="jumbotron bg-primary text-white p-4 rounded">
+                <h1 class="display-5">
+                    <i class="fas fa-box me-3"></i>
+                    Hệ thống quản lý sản phẩm
+                </h1>
+                <p class="lead">Tìm kiếm và xem thông tin sản phẩm từ các nhà cung cấp</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <form method="GET" action="/products">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                    <input type="text" class="form-control" name="search" 
+                                           placeholder="Tìm kiếm sản phẩm..." 
+                                           value="<%= search %>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select name="supplier" class="form-select">
+                                    <option value="">Tất cả nhà cung cấp</option>
+                                    <% suppliers.forEach(function(supplier) { %>
+                                        <option value="<%= supplier._id %>" 
+                                                <%= selectedSupplier === supplier._id.toString() ? 'selected' : '' %>>
+                                            <%= supplier.name %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search me-1"></i>
+                                    Tìm
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row">
+        <% if (products.length > 0) { %>
+            <% products.forEach(function(product) { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                <i class="fas fa-box me-2"></i>
+                                <%= product.name %>
+                            </h5>
+                            
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">
+                                    <%= product.category || 'Chưa phân loại' %>
+                                </span>
+                                <span class="badge <%= product.stockStatus === 'In Stock' ? 'bg-success' : 
+                                                      product.stockStatus === 'Low Stock' ? 'bg-warning' : 'bg-danger' %>">
+                                    <%= product.stockStatus %>
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted">
+                                <%= product.description || 'Không có mô tả' %>
+                            </p>
+
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="border-end">
+                                        <h6 class="text-success mb-0">
+                                            <%= product.price.toLocaleString('vi-VN') %>đ
+                                        </h6>
+                                        <small class="text-muted">Giá</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-info mb-0">
+                                        <%= product.quantity %>
+                                    </h6>
+                                    <small class="text-muted">Số lượng</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer bg-light">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-truck text-muted me-2"></i>
+                                <div>
+                                    <strong><%= product.supplier.name %></strong><br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        <%= product.supplier.address %>
+                                    </small><br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-1"></i>
+                                        <%= product.supplier.phone %>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Không tìm thấy sản phẩm</h4>
+                    <p class="text-muted">
+                        <% if (search || selectedSupplier) { %>
+                            Hãy thử tìm kiếm với từ khóa khác hoặc chọn nhà cung cấp khác.
+                        <% } else { %>
+                            Hiện tại chưa có sản phẩm nào trong hệ thống.
+                        <% } %>
+                    </p>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Pagination -->
+    <% if (pagination.totalPages > 1) { %>
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="Product pagination">
+                    <ul class="pagination justify-content-center">
+                        <% if (pagination.hasPrev) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= pagination.prevPage %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                        <% } %>
+                        
+                        <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                            <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                        <% } %>
+                        
+                        <% if (pagination.hasNext) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= pagination.nextPage %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Stats -->
+    <div class="row mt-4">
+        <div class="col-12 text-center text-muted">
+            <small>
+                Hiển thị <%= products.length %> sản phẩm
+                <% if (search) { %>
+                    cho từ khóa "<%= search %>"
+                <% } %>
+                <% if (selectedSupplier) { %>
+                    <% const selectedSupplierName = suppliers.find(s => s._id.toString() === selectedSupplier); %>
+                    <% if (selectedSupplierName) { %>
+                        từ nhà cung cấp "<%= selectedSupplierName.name %>"
+                    <% } %>
+                <% } %>
+            </small>
+        </div>
+    </div>
+</div>

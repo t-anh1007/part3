@@ -1,0 +1,215 @@
+<div class="container mt-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="fas fa-box me-2"></i>
+                Quản lý sản phẩm
+            </h1>
+            <p class="text-muted mb-0">Quản lý toàn bộ sản phẩm trong hệ thống</p>
+        </div>
+        <a href="/products/create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>
+            Thêm sản phẩm
+        </a>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="/products/admin">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" class="form-control" name="search" 
+                                   placeholder="Tìm kiếm sản phẩm..." 
+                                   value="<%= search %>">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <select name="supplier" class="form-select">
+                            <option value="">Tất cả nhà cung cấp</option>
+                            <% suppliers.forEach(function(supplier) { %>
+                                <option value="<%= supplier._id %>" 
+                                        <%= selectedSupplier === supplier._id.toString() ? 'selected' : '' %>>
+                                    <%= supplier.name %>
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-search me-1"></i>
+                            Tìm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card">
+        <div class="card-body">
+            <% if (products.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Danh mục</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(function(product) { %>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong><%= product.name %></strong>
+                                            <% if (product.sku) { %>
+                                                <br><small class="text-muted">SKU: <%= product.sku %></small>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold">
+                                            <%= product.price.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= product.quantity > 10 ? 'bg-success' : 
+                                                               product.quantity > 0 ? 'bg-warning' : 'bg-danger' %>">
+                                            <%= product.quantity %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong><%= product.supplier.name %></strong>
+                                            <br><small class="text-muted">
+                                                <i class="fas fa-phone me-1"></i>
+                                                <%= product.supplier.phone %>
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            <%= product.category || 'N/A' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= product.stockStatus === 'In Stock' ? 'bg-success' : 
+                                                              product.stockStatus === 'Low Stock' ? 'bg-warning' : 'bg-danger' %>">
+                                            <%= product.stockStatus %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="/products/<%= product._id %>/edit" 
+                                               class="btn btn-sm btn-outline-primary" title="Sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    onclick="deleteProduct('<%= product._id %>', '<%= product.name %>')" 
+                                                    title="Xóa">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">Không có sản phẩm</h4>
+                    <p class="text-muted">
+                        <% if (search || selectedSupplier) { %>
+                            Không tìm thấy sản phẩm phù hợp với bộ lọc.
+                        <% } else { %>
+                            Chưa có sản phẩm nào trong hệ thống.
+                        <% } %>
+                    </p>
+                    <a href="/products/create" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>
+                        Thêm sản phẩm đầu tiên
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <% if (pagination.totalPages > 1) { %>
+        <div class="mt-4">
+            <nav aria-label="Product pagination">
+                <ul class="pagination justify-content-center">
+                    <% if (pagination.hasPrev) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= pagination.prevPage %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                        <li class="page-item <%= pagination.page === i ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                    <% } %>
+                    
+                    <% if (pagination.hasNext) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= pagination.nextPage %>&search=<%= search %>&supplier=<%= selectedSupplier %>">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
+    <% } %>
+</div>
+
+<script>
+function deleteProduct(id, name) {
+    if (confirm(`Bạn có chắc muốn xóa sản phẩm "${name}"?`)) {
+        fetch(`/products/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Xóa sản phẩm thành công!');
+                window.location.href = '/products/admin';
+            } else {
+                alert('Có lỗi xảy ra: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi xóa sản phẩm: ' + error.message);
+        });
+    }
+}
+</script>
