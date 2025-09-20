@@ -421,6 +421,7 @@ class ProductController {
    */
   async update(req, res) {
     try {
+      
       const { name, price, quantity, supplier, description, category, sku } = req.body;
       const productId = req.params.id;
 

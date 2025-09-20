@@ -9,8 +9,10 @@ router.get('/', productController.index);
 // Admin routes (require authentication and admin role)
 router.get('/admin', requireAuth, requireAdmin, productController.admin);
 router.get('/create', requireAuth, requireAdmin, productController.showCreate);
-router.get('/:id/edit', requireAuth, requireAdmin, productController.showEdit);
 router.post('/', requireAuth, requireAdmin, productController.create);
+
+// Routes with ID parameter (must come after specific routes)
+router.get('/:id/edit', requireAuth, requireAdmin, productController.showEdit);
 router.put('/:id', requireAuth, requireAdmin, productController.update);
 router.delete('/:id', requireAuth, requireAdmin, productController.delete);
 

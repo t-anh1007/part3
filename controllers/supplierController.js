@@ -291,6 +291,7 @@ class SupplierController {
    */
   async update(req, res) {
     try {
+      
       const { name, address, phone, email, description } = req.body;
       const supplierId = req.params.id;
 

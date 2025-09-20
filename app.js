@@ -41,6 +41,8 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(methodOverride('_method'));
 
+
+
 // Session middleware
 app.use(session(sessionConfig));
 
@@ -62,6 +64,8 @@ app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/suppliers', supplierRoutes);
 app.use('/api', apiRoutes);
+
+
 
 // 404 handler
 app.use((req, res, next) => {
