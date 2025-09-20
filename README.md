@@ -235,11 +235,6 @@ Username: admin1
 Password: admin123
 Role: admin
 
-Username: nguyentuananh  
-Password: 22707991
-Role: admin
-```
-
 ### 👤 User Accounts (Chỉ xem):
 ```
 Username: user1
