@@ -14,8 +14,8 @@ const connectDB = require('./config/database');
 const seedData = {
   users: [
     {
-      username: 'admin',
-      email: 'admin@example.com',
+      username: 'admin1',
+      email: 'admin1@example.com',
       phone: '0123456789',
       password: 'admin123',
       role: 'admin'

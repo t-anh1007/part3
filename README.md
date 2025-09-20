@@ -129,6 +129,28 @@ cd 22707991_NguyenTuanAnh_Part3
 npm install
 ```
 
+Hoặc cài đặt từng package theo thứ tự:
+
+```bash
+# Core frameworks
+npm install express mongoose dotenv
+
+# Template engine
+npm install ejs express-ejs-layouts
+
+# Authentication & Session
+npm install bcryptjs express-session connect-mongo
+
+# Middleware
+npm install method-override connect-flash
+
+# API Documentation
+npm install swagger-ui-express swagger-jsdoc
+
+# Development dependencies
+npm install --save-dev nodemon
+```
+
 ### 3. Cấu hình môi trường
 
 Tạo file `.env` với nội dung:
@@ -179,7 +201,7 @@ Script này sẽ tạo:
 
 ### 6. Khởi động ứng dụng
 
-#### Development mode:
+#### Development mode (với nodemon - auto restart):
 ```bash
 npm run dev
 ```
@@ -187,6 +209,15 @@ npm run dev
 #### Production mode:
 ```bash
 npm start
+```
+
+#### Các lệnh khác:
+```bash
+# Tạo dữ liệu mẫu
+npm run seed
+
+# Chạy tests (nếu có)
+npm test
 ```
 
 ### 7. Truy cập ứng dụng
@@ -198,13 +229,22 @@ npm start
 
 Sau khi chạy `npm run seed`, bạn có thể đăng nhập với các tài khoản sau:
 
-### Admin Accounts:
+### 🔑 Admin Accounts (Có quyền quản trị):
 ```
-Username: admin
+Username: admin1
 Password: admin123
+Role: admin
 
 Username: nguyentuananh  
 Password: 22707991
+Role: admin
+```
+
+### 👤 User Accounts (Chỉ xem):
+```
+Username: user1
+Password: user123
+Role: user
 ```
 
 ### User Account:
